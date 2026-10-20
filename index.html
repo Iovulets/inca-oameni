@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>(încă) oameni — Transylvania Spoken Word</title>
+  <meta name="description" content="In a world where it’s hard to keep up with technology, one thing stays the same — we are people in a world of people.">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="(încă) oameni — Transylvania Spoken Word">
+  <meta property="og:description" content="In a world where it’s hard to keep up with technology, one thing stays the same — we are people in a world of people.">
+  <!-- TODO: make this an absolute URL once the live domain is known -->
+  <meta property="og:image" content="assets/oameni-poster.jpg">
+  <meta property="og:image:width" content="1080">
+  <meta property="og:image:height" content="1080">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page">
+    <h1 class="visually-hidden">(încă) oameni</h1>
+
+    <video class="hero" autoplay muted loop playsinline preload="metadata"
+           poster="assets/oameni-poster.jpg"
+           aria-label="Event cover animation">
+      <source src="assets/oameni.webm" type="video/webm">
+      <source src="assets/oameni.mp4" type="video/mp4">
+    </video>
+
+    <section class="ticket" aria-label="Event details">
+      <div class="ticket-top">
+        <div class="ticket-cell">
+          <span class="label">Date</span>
+          <span class="value">Tue, Oct 27</span>
+          <span class="sub-value">2026</span>
+        </div>
+        <div class="ticket-cell">
+          <span class="label">Where</span>
+          <span class="value">Atelier Cafe</span>
+          <a class="address" href="https://share.google/6RIZFG4lWJdAWH2Ak" target="_blank" rel="noopener">Str. Memorandumului 9 ↗</a>
+        </div>
+      </div>
+
+      <div class="schedule">
+        <span class="label">Schedule</span>
+        <div class="row"><span class="time">18:00</span><span>Doors open</span></div>
+        <div class="row row-strong"><span class="time">18:45</span><span>Show starts</span></div>
+        <div class="row"><span class="time">20:00</span><span>Show ends</span></div>
+        <div class="row row-info row-divided"><span class="row-label">Show language</span><span>Romanian</span></div>
+        <div class="row row-info"><span class="row-label">Music</span><span>Jazz &amp; UK Garage</span></div>
+      </div>
+
+      <hr class="ticket-divider">
+
+      <div class="price">
+        <div class="price-row">
+          <span class="price-value">Free</span>
+          <span class="price-note">Limited spots</span>
+        </div>
+        <a class="button" href="https://ticket.johnnyisfine.eu/tsw">Book your spot</a>
+      </div>
+    </section>
+
+    <section class="about">
+      <h2>About</h2>
+      <p class="lead">In a world where it’s hard to keep up with technology, one thing stays the same — we are people in a world of people.</p>
+      <p>An event by Transylvania Spoken Word, bringing Maria Ungureanu, Tina Suciu, Paul Cristian and Cătălin Iovu to the stage.</p>
+      <p>Discover 4 different perspectives in a spoken word poetry show that takes you back to an analog world — among friends and beautiful people, with emotions on your face and vibrations in your heart.</p>
+      <p>After the show, stay for the social night. We’ll play jazz and UK garage, so come ready to mingle and dance.</p>
+    </section>
+
+    <footer class="footer">
+      <span>© Transylvania Spoken Word</span>
+      <a class="instagram" href="https://instagram.com/transylvaniaspokenword" target="_blank" rel="noopener" aria-label="Transylvania Spoken Word on Instagram">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5"/>
+          <circle cx="12" cy="12" r="4.5"/>
+          <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+        </svg>
+      </a>
+    </footer>
+  </main>
+
+  <script>
+    const v = document.querySelector('video.hero');
+    if (v) {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const apply = () => {
+        if (reduce.matches) {
+          v.removeAttribute('autoplay');
+          v.pause();
+          v.load(); // resets the element so the poster shows again
+        } else {
+          v.muted = true;
+          v.play()?.catch(() => {});
+        }
+      };
+      apply();
+      reduce.addEventListener?.('change', apply);
+    }
+  </script>
+</body>
+</html>
