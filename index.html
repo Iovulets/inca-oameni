@@ -10,15 +10,16 @@
   <meta property="og:title" content="(încă) oameni — Transylvania Spoken Word">
   <meta property="og:description" content="In a world where it’s hard to keep up with technology, one thing stays the same — we are people in a world of people.">
   <!-- TODO: make this an absolute URL once the live domain is known -->
-  <meta property="og:image" content="assets/oameni-poster.jpg">
-  <meta property="og:image:width" content="1080">
-  <meta property="og:image:height" content="1080">
+  <meta property="og:image" content="assets/cover-16x9.jpg">
+  <meta property="og:image:width" content="1440">
+  <meta property="og:image:height" content="810">
   <meta name="twitter:card" content="summary_large_image">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap">
-  <link rel="preload" as="image" href="assets/oameni-poster.jpg">
+  <link rel="preload" as="image" href="assets/cover-1x1.jpg" media="(max-width: 767px)">
+  <link rel="preload" as="image" href="assets/cover-16x9.jpg" media="(min-width: 768px)">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -26,11 +27,7 @@
     <h1 class="visually-hidden">(încă) oameni</h1>
 
     <video class="hero" muted loop playsinline preload="metadata"
-           poster="assets/oameni-poster.jpg"
-           aria-label="Event cover animation">
-      <source src="assets/oameni.webm" type="video/webm">
-      <source src="assets/oameni.mp4" type="video/mp4">
-    </video>
+           aria-label="Event cover animation"></video>
 
     <section class="ticket" aria-label="Event details">
       <div class="ticket-top">
@@ -48,9 +45,9 @@
 
       <div class="schedule">
         <span class="label">Schedule</span>
-        <div class="row"><span class="time">18:00</span><span>Doors open</span></div>
-        <div class="row row-strong"><span class="time">18:45</span><span>Show starts</span></div>
-        <div class="row"><span class="time">20:00</span><span>Show ends</span></div>
+        <div class="row"><span>Doors open</span><span class="time">18:00</span></div>
+        <div class="row row-strong"><span>Show starts</span><span class="time">18:45</span></div>
+        <div class="row"><span>Show ends</span><span class="time">20:00</span></div>
         <div class="row row-divided"><span class="row-label">Show language</span><span>Romanian</span></div>
         <div class="row"><span class="row-label">Music</span><span>Jazz &amp; UK Garage</span></div>
       </div>
@@ -86,25 +83,83 @@
     </footer>
   </main>
 
+  <div class="consent" role="region" aria-label="Cookie consent" hidden>
+    <p>We’d like to use Meta cookies to see how people find this event.</p>
+    <div class="consent-actions">
+      <button type="button" class="consent-decline" data-consent="declined">Decline</button>
+      <button type="button" class="consent-accept" data-consent="granted">Accept</button>
+    </div>
+  </div>
+
   <script>
+    // Meta Pixel loads only after the visitor accepts cookies (EU consent rules)
+    function loadMetaPixel() {
+      /* Meta Pixel Code */
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '1068271386260178');
+      fbq('track', 'PageView');
+      /* End Meta Pixel Code */
+    }
+
+    const CONSENT_KEY = 'tsw-cookie-consent';
+    let consent = null;
+    try { consent = localStorage.getItem(CONSENT_KEY); } catch {}
+
+    if (consent === 'granted') {
+      loadMetaPixel();
+    } else if (!consent) {
+      const banner = document.querySelector('.consent');
+      banner.hidden = false;
+      banner.addEventListener('click', (e) => {
+        const choice = e.target.closest('[data-consent]')?.dataset.consent;
+        if (!choice) return;
+        try { localStorage.setItem(CONSENT_KEY, choice); } catch {}
+        banner.hidden = true;
+        if (choice === 'granted') loadMetaPixel();
+      });
+    }
+
+    // Report bookings to Meta; fbq only exists once the visitor has accepted
+    document.querySelector('.button').addEventListener('click', () => {
+      window.fbq?.('track', 'Lead');
+    });
+  </script>
+
+  <script>
+    // One video element; CSS decides which cover fits the layout, so only
+    // that file downloads, and reduced-motion visitors get just the poster
     const v = document.querySelector('video.hero');
     if (v) {
-      // Playback starts from here rather than an autoplay attribute, so
-      // reduced-motion visitors never download the video
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-      const apply = () => {
-        if (reduce.matches) {
-          if (!v.paused) {
-            v.pause();
-            v.load(); // resets the element so the poster shows again
-          }
-        } else {
-          v.muted = true;
-          v.play()?.catch(() => {});
-        }
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let current;
+      const showCover = () => {
+        const cover = getComputedStyle(v).getPropertyValue('--cover').trim();
+        if (cover === current) return;
+        current = cover;
+        v.poster = `assets/cover-${cover}.jpg`;
+        if (reduce) return;
+        // Only the square cover has an MP4 for browsers without WebM
+        const formats = cover === '1x1' ? ['webm', 'mp4'] : ['webm'];
+        v.replaceChildren(...formats.map((ext) => {
+          const source = document.createElement('source');
+          source.src = `assets/cover-${cover}.${ext}`;
+          source.type = `video/${ext}`;
+          return source;
+        }));
+        v.load();
+        v.muted = true; // some browsers ignore the muted attribute
+        v.play()?.catch(() => {});
       };
-      apply();
-      reduce.addEventListener?.('change', apply);
+      showCover();
+      // Swap covers if the window is resized across the layout breakpoint
+      new ResizeObserver(showCover).observe(v);
     }
   </script>
 </body>
