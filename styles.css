@@ -49,7 +49,7 @@ body {
 }
 
 /* Zero specificity so each component keeps its own border-radius */
-:where(a:focus-visible) {
+:where(a, button):focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 3px;
   border-radius: 4px;
@@ -254,6 +254,61 @@ body {
   content: '';
   position: absolute;
   inset: -9px;
+}
+
+/* Cookie consent banner (shown until the visitor chooses) */
+
+.consent {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 448px;
+  margin: 0 auto;
+  padding: 16px;
+  background: var(--card);
+  border-radius: var(--radius-card);
+  box-shadow: 0 8px 32px rgb(22 22 22 / 0.16);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-body);
+}
+
+.consent[hidden] {
+  display: none;
+}
+
+.consent p {
+  margin: 0;
+}
+
+.consent-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.consent button {
+  flex: 1;
+  min-height: 44px;
+  border: 1px solid var(--ink);
+  border-radius: 12px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.consent-decline {
+  background: var(--card);
+  color: var(--ink);
+}
+
+.consent-accept {
+  background: var(--ink);
+  color: var(--on-ink);
 }
 
 /* Desktop: one centered 720px column (designed at 1440px).

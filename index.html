@@ -83,6 +83,55 @@
     </footer>
   </main>
 
+  <div class="consent" role="region" aria-label="Cookie consent" hidden>
+    <p>We’d like to use Meta cookies to see how people find this event.</p>
+    <div class="consent-actions">
+      <button type="button" class="consent-decline" data-consent="declined">Decline</button>
+      <button type="button" class="consent-accept" data-consent="granted">Accept</button>
+    </div>
+  </div>
+
+  <script>
+    // Meta Pixel loads only after the visitor accepts cookies (EU consent rules)
+    function loadMetaPixel() {
+      /* Meta Pixel Code */
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '1068271386260178');
+      fbq('track', 'PageView');
+      /* End Meta Pixel Code */
+    }
+
+    const CONSENT_KEY = 'tsw-cookie-consent';
+    let consent = null;
+    try { consent = localStorage.getItem(CONSENT_KEY); } catch {}
+
+    if (consent === 'granted') {
+      loadMetaPixel();
+    } else if (!consent) {
+      const banner = document.querySelector('.consent');
+      banner.hidden = false;
+      banner.addEventListener('click', (e) => {
+        const choice = e.target.closest('[data-consent]')?.dataset.consent;
+        if (!choice) return;
+        try { localStorage.setItem(CONSENT_KEY, choice); } catch {}
+        banner.hidden = true;
+        if (choice === 'granted') loadMetaPixel();
+      });
+    }
+
+    // Report bookings to Meta; fbq only exists once the visitor has accepted
+    document.querySelector('.button').addEventListener('click', () => {
+      window.fbq?.('track', 'Lead');
+    });
+  </script>
+
   <script>
     // One video element; CSS decides which cover fits the layout, so only
     // that file downloads, and reduced-motion visitors get just the poster
