@@ -137,20 +137,29 @@
     // that file downloads, and reduced-motion visitors get just the poster
     const v = document.querySelector('video.hero');
     if (v) {
-      const cover = getComputedStyle(v).getPropertyValue('--cover').trim();
-      v.poster = `assets/cover-${cover}.jpg`;
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let current;
+      const showCover = () => {
+        const cover = getComputedStyle(v).getPropertyValue('--cover').trim();
+        if (cover === current) return;
+        current = cover;
+        v.poster = `assets/cover-${cover}.jpg`;
+        if (reduce) return;
         // Only the square cover has an MP4 for browsers without WebM
         const formats = cover === '1x1' ? ['webm', 'mp4'] : ['webm'];
-        for (const ext of formats) {
+        v.replaceChildren(...formats.map((ext) => {
           const source = document.createElement('source');
           source.src = `assets/cover-${cover}.${ext}`;
           source.type = `video/${ext}`;
-          v.append(source);
-        }
+          return source;
+        }));
+        v.load();
         v.muted = true; // some browsers ignore the muted attribute
         v.play()?.catch(() => {});
-      }
+      };
+      showCover();
+      // Swap covers if the window is resized across the layout breakpoint
+      new ResizeObserver(showCover).observe(v);
     }
   </script>
 </body>
