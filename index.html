@@ -11,8 +11,8 @@
   <meta property="og:description" content="In a world where it’s hard to keep up with technology, one thing stays the same — we are people in a world of people.">
   <!-- TODO: make this an absolute URL once the live domain is known -->
   <meta property="og:image" content="assets/cover-16x9.jpg">
-  <meta property="og:image:width" content="1920">
-  <meta property="og:image:height" content="1080">
+  <meta property="og:image:width" content="1440">
+  <meta property="og:image:height" content="810">
   <meta name="twitter:card" content="summary_large_image">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +26,7 @@
   <main class="page">
     <h1 class="visually-hidden">(încă) oameni</h1>
 
-    <video class="hero" autoplay muted loop playsinline preload="metadata"
+    <video class="hero" muted loop playsinline preload="metadata"
            aria-label="Event cover animation"></video>
 
     <section class="ticket" aria-label="Event details">
@@ -84,19 +84,24 @@
   </main>
 
   <script>
-    // One video element; the source is picked once so only one file downloads
+    // One video element; CSS decides which cover fits the layout, so only
+    // that file downloads, and reduced-motion visitors get just the poster
     const v = document.querySelector('video.hero');
     if (v) {
-      const desktop = window.matchMedia('(min-width: 768px)').matches;
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      // Only the square cover has an MP4 for browsers without WebM support
-      const webm = v.canPlayType('video/webm') !== '';
-      if (reduce) v.removeAttribute('autoplay'); // show the poster only
-      v.poster = desktop ? 'assets/cover-16x9.jpg' : 'assets/cover-1x1.jpg';
-      v.src = desktop ? 'assets/cover-16x9.webm'
-            : webm ? 'assets/cover-1x1.webm' : 'assets/cover-1x1.mp4';
-      v.muted = true; // some browsers ignore the muted attribute
-      if (!reduce) v.play()?.catch(() => {});
+      const cover = getComputedStyle(v).getPropertyValue('--cover').trim();
+      v.poster = `assets/cover-${cover}.jpg`;
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        // Only the square cover has an MP4 for browsers without WebM
+        const formats = cover === '1x1' ? ['webm', 'mp4'] : ['webm'];
+        for (const ext of formats) {
+          const source = document.createElement('source');
+          source.src = `assets/cover-${cover}.${ext}`;
+          source.type = `video/${ext}`;
+          v.append(source);
+        }
+        v.muted = true; // some browsers ignore the muted attribute
+        v.play()?.catch(() => {});
+      }
     }
   </script>
 </body>
