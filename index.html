@@ -83,7 +83,7 @@
     </footer>
   </main>
 
-  <dialog class="consent" aria-label="Cookie consent">
+  <dialog class="consent" closedby="none" aria-label="Cookie consent">
     <p>We are using 🍪 to help this event reach people like you. Cookies are annoying, but they are important for small teams like ours.</p>
     <div class="consent-actions">
       <button type="button" class="consent-decline" data-consent="declined">Decline 😪</button>
@@ -117,15 +117,12 @@
     } else if (!consent) {
       // Modal popup: the visitor has to pick one of the two buttons
       const banner = document.querySelector('.consent');
-      let chosen = false;
       banner.showModal();
+      // closedby="none" blocks Esc; this covers browsers without it (Safari)
       banner.addEventListener('cancel', (e) => e.preventDefault());
-      // Some browsers still close on a repeated Esc; reopen until a choice is made
-      banner.addEventListener('close', () => { if (!chosen) banner.showModal(); });
       banner.addEventListener('click', (e) => {
         const choice = e.target.closest('[data-consent]')?.dataset.consent;
         if (!choice) return;
-        chosen = true;
         try { localStorage.setItem(CONSENT_KEY, choice); } catch {}
         banner.close();
         if (choice === 'granted') loadMetaPixel();

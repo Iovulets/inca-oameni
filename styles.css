@@ -261,7 +261,7 @@ body {
 .consent {
   width: calc(100% - 32px);
   max-width: 448px;
-  padding: 20px;
+  padding: var(--card-pad-y) var(--card-pad-x);
   border: 0;
   background: var(--card);
   border-radius: var(--radius-card);
@@ -278,7 +278,7 @@ body {
 }
 
 .consent::backdrop {
-  background: rgb(22 22 22 / 0.6);
+  background: color-mix(in srgb, var(--ink) 60%, transparent);
 }
 
 /* Stop the page scrolling behind the popup */
