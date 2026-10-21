@@ -256,30 +256,34 @@ body {
   inset: -9px;
 }
 
-/* Cookie consent banner (shown until the visitor chooses) */
+/* Cookie consent popup: centered modal shown until the visitor chooses */
 
 .consent {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
-  left: 16px;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  width: calc(100% - 32px);
   max-width: 448px;
-  margin: 0 auto;
-  padding: 16px;
+  padding: var(--card-pad-y) var(--card-pad-x);
+  border: 0;
   background: var(--card);
   border-radius: var(--radius-card);
   box-shadow: 0 8px 32px rgb(22 22 22 / 0.16);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.5;
   color: var(--ink-body);
 }
 
-.consent[hidden] {
-  display: none;
+.consent[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.consent::backdrop {
+  background: color-mix(in srgb, var(--ink) 60%, transparent);
+}
+
+/* Stop the page scrolling behind the popup */
+html:has(.consent[open]) {
+  overflow: hidden;
 }
 
 .consent p {

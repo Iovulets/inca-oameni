@@ -83,13 +83,13 @@
     </footer>
   </main>
 
-  <div class="consent" role="region" aria-label="Cookie consent" hidden>
-    <p>We’d like to use Meta cookies to see how people find this event.</p>
+  <dialog class="consent" closedby="none" aria-label="Cookie consent">
+    <p>We are using 🍪 to help this event reach people like you. Cookies are annoying, but they are important for small teams like ours.</p>
     <div class="consent-actions">
-      <button type="button" class="consent-decline" data-consent="declined">Decline</button>
-      <button type="button" class="consent-accept" data-consent="granted">Accept</button>
+      <button type="button" class="consent-decline" data-consent="declined">Decline 😪</button>
+      <button type="button" class="consent-accept" data-consent="granted">Okay, okay 🥺</button>
     </div>
-  </div>
+  </dialog>
 
   <script>
     // Meta Pixel loads only after the visitor accepts cookies (EU consent rules)
@@ -115,13 +115,16 @@
     if (consent === 'granted') {
       loadMetaPixel();
     } else if (!consent) {
+      // Modal popup: the visitor has to pick one of the two buttons
       const banner = document.querySelector('.consent');
-      banner.hidden = false;
+      banner.showModal();
+      // closedby="none" blocks Esc; this covers browsers without it (Safari)
+      banner.addEventListener('cancel', (e) => e.preventDefault());
       banner.addEventListener('click', (e) => {
         const choice = e.target.closest('[data-consent]')?.dataset.consent;
         if (!choice) return;
         try { localStorage.setItem(CONSENT_KEY, choice); } catch {}
-        banner.hidden = true;
+        banner.close();
         if (choice === 'granted') loadMetaPixel();
       });
     }
