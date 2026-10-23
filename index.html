@@ -121,11 +121,9 @@
     if (consent === 'granted') {
       loadMetaPixel();
     } else if (!consent) {
-      // Modal popup: the visitor has to pick one of the two buttons
+      // Non-blocking banner: the page stays usable until the visitor picks a button
       const banner = document.querySelector('.consent');
-      banner.showModal();
-      // closedby="none" blocks Esc; this covers browsers without it (Safari)
-      banner.addEventListener('cancel', (e) => e.preventDefault());
+      banner.show();
       banner.addEventListener('click', (e) => {
         const choice = e.target.closest('[data-consent]')?.dataset.consent;
         if (!choice) return;

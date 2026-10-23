@@ -256,9 +256,13 @@ body {
   inset: -9px;
 }
 
-/* Cookie consent popup: centered modal shown until the visitor chooses */
+/* Cookie consent banner: pinned to the bottom, shown until the visitor chooses */
 
 .consent {
+  position: fixed;
+  inset: auto 0 16px;
+  z-index: 10;
+  margin: 0 auto;
   width: calc(100% - 32px);
   max-width: 448px;
   padding: var(--card-pad-y) var(--card-pad-x);
@@ -275,15 +279,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.consent::backdrop {
-  background: color-mix(in srgb, var(--ink) 60%, transparent);
-}
-
-/* Stop the page scrolling behind the popup */
-html:has(.consent[open]) {
-  overflow: hidden;
 }
 
 .consent p {
